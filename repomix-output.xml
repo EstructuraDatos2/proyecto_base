@@ -1,0 +1,823 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.gitignore
+build.bat
+engine/engine.c
+engine/engine.h
+engine/input.c
+engine/input.h
+engine/renderer.c
+engine/renderer.h
+engine/scene.c
+engine/scene.h
+engine/timer.c
+engine/timer.h
+games/collision.c
+games/collision.h
+games/dungeon/main.c
+games/dungeon/maps/castle.txt
+games/dungeon/maps/caves.txt
+games/dungeon/maps/level1.txt
+games/dungeon/maps/level2.txt
+games/dungeon/maps/maze.txt
+games/dungeon/scenes/level1_scene.c
+games/dungeon/scenes/level1_scene.h
+games/dungeon/scenes/level2_scene.c
+games/dungeon/scenes/level2_scene.h
+games/entity.h
+games/tilemap.c
+games/tilemap.h
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".gitignore">
+repomix-output.xml
+game.exe
+</file>
+
+<file path="engine/input.c">
+#include <windows.h>
+#include "input.h"
+
+static short keys[256];
+
+void input_update() {
+
+    keys[KEY_W] = GetAsyncKeyState('W');
+    keys[KEY_A] = GetAsyncKeyState('A');
+    keys[KEY_S] = GetAsyncKeyState('S');
+    keys[KEY_D] = GetAsyncKeyState('D');
+
+    keys[KEY_ESCAPE] = GetAsyncKeyState(VK_ESCAPE);
+}
+
+int key_down(int key) {
+
+    return keys[key];
+}
+</file>
+
+<file path="engine/input.h">
+#ifndef INPUT_H
+#define INPUT_H
+
+enum {
+    KEY_W,
+    KEY_A,
+    KEY_S,
+    KEY_D,
+    KEY_ESCAPE
+};
+
+void input_update();
+
+int key_down(int key);
+
+#endif
+</file>
+
+<file path="engine/timer.h">
+#ifndef TIMER_H
+#define TIMER_H
+
+void timer_init();
+void timer_update();
+
+#endif
+</file>
+
+<file path="games/collision.c">
+#include "collision.h"
+
+int entity_collides(Entity* a, Entity* b) {
+
+    return (
+        a->x < b->x + b->width &&
+        a->x + a->width > b->x &&
+        a->y < b->y + b->height &&
+        a->y + a->height > b->y
+    );
+}
+</file>
+
+<file path="games/collision.h">
+#ifndef COLLISION_H
+#define COLLISION_H
+
+#include "entity.h"
+
+int entity_collides(Entity* a, Entity* b);
+
+#endif
+</file>
+
+<file path="games/dungeon/main.c">
+#include "../../engine/engine.h" // Imporamos el engine para que se ejecute
+#include "scenes/level1_scene.h" // Importamos la escena principal, de aqui se movera a otras escenas.
+
+int main() {
+    EngineConfig screenConfig = {
+        30,
+        16
+    };
+    
+    // INIT: Configuracion inicial de pantalla
+    engine_init(screenConfig);
+
+    // SET_SCENE: Escena inicial del juego
+    engine_set_scene(&level1Scene);
+
+    // RUN: Ejecuta el loop principal
+    engine_run();
+
+    // SHUTDOWN: Realiza limpieza, libera memoria y recursos utilizados
+    engine_shutdown();
+
+    return 0;
+}
+</file>
+
+<file path="games/dungeon/maps/castle.txt">
+############################
+#                          #
+#      ###########         #
+#      #         #         #
+#      #  #####  #         #
+#      #  #   #  #         #
+#      #  #####  #         #
+#      #         #         #
+#      ###########         #
+#                          #
+############################
+</file>
+
+<file path="games/dungeon/maps/caves.txt">
+############################
+#       ######             #
+#    ####    #####         #
+#                ###       #
+#    #####                 #
+#         ######           #
+#   ###                    #
+#   #########      ####    #
+#                          #
+#              #####       #
+############################
+</file>
+
+<file path="games/dungeon/maps/level1.txt">
+############################
+#         #                #
+#         #      ####      #
+#         #                #
+#         ######           #
+#                          #
+#              #######     D
+#                          #
+#     ####                 #
+#                          #
+############################
+</file>
+
+<file path="games/dungeon/maps/level2.txt">
+############################
+#         #                #
+#   ####  #   ##########   #
+#   #     #          #     #
+#   #     #######    #     #
+#   #                #     #
+D   ###########      #     #
+#                #####     #
+#                          #
+#                          #
+############################
+</file>
+
+<file path="games/dungeon/maps/maze.txt">
+############################
+#     #           #        #
+# ### # ######### # ###### #
+# #   #       #   #      # #
+# # ####### # # ####### ## #
+# #       # # #       #    #
+# ####### # # ####### ######
+#       # # #              #
+####### # # ############## #
+#         #                #
+############################
+</file>
+
+<file path="games/dungeon/scenes/level1_scene.c">
+#include "level1_scene.h"
+#include "level2_scene.h"
+
+#include "../../../engine/renderer.h"
+#include "../../../engine/input.h"
+#include "../../../engine/engine.h"
+
+#include "../../tilemap.h"
+#include "../../entity.h"
+
+static TileMap map;
+static Entity player = { 5, 5, 1, 1, '@' };
+
+// PROTOTIPOS
+void level1_init();
+void level1_update();
+void level1_render();
+void level1_destroy();
+int verifyDoor(int x, int y);
+
+Scene level1Scene = {
+    level1_init,
+    level1_update,
+    level1_render,
+    level1_destroy,
+};
+
+void level1_init() {
+    map = tilemap_load("games/dungeon/maps/level1.txt");
+}
+
+void level1_update() {
+    int nextX = player.x;
+    int nextY = player.y;
+
+    if(key_down(KEY_W)) nextY--;
+    if(key_down(KEY_S)) nextY++;
+    if(key_down(KEY_A)) nextX--;
+    if(key_down(KEY_D)) nextX++;
+
+    // Verifica las colisiones con tiles de pared (#)
+    if(tilemap_entity_is_walkable(&map, &player, nextX, nextY)) {
+        if(map.tiles[nextY][nextX] == 'D' && nextX == 27 && nextY == 6) {
+            engine_set_scene(&level2Scene);
+            return;
+        }
+            
+        player.x = nextX;
+        player.y = nextY;
+    }
+
+    if(key_down(KEY_ESCAPE)) engine_stop();
+}
+
+void level1_render() {
+    renderer_set_viewport(1, 2);
+    renderer_draw_text(8, 0, "FRONT YARD");
+    renderer_draw_map(&map);
+    renderer_draw_entity(&player);
+    renderer_draw_text(1, 14, "HP: 100");
+}
+
+void level1_destroy() {
+    tilemap_destroy(&map);
+}
+</file>
+
+<file path="games/dungeon/scenes/level1_scene.h">
+#ifndef LEVEL1_SCENE_H
+#define LEVEL1_SCENE_H
+
+#include "../../../engine/scene.h"
+
+extern Scene level1Scene;
+
+#endif
+</file>
+
+<file path="games/dungeon/scenes/level2_scene.c">
+#include "level2_scene.h"
+#include "level1_scene.h"
+
+#include "../../../engine/renderer.h"
+#include "../../../engine/input.h"
+#include "../../../engine/engine.h"
+
+#include "../../tilemap.h"
+
+static TileMap map;
+static Entity player = { 1, 6, 1, 1, '@' };
+
+// PROTOTIPOS
+void level2_init();
+void level2_update();
+void level2_render();
+void level2_destroy();
+
+Scene level2Scene = {
+    level2_init,
+    level2_update,
+    level2_render,
+    level2_destroy,
+};
+
+void level2_init() {
+    map = tilemap_load("games/dungeon/maps/level2.txt");
+}
+
+void level2_update() {
+    int nextX = player.x;
+    int nextY = player.y;
+
+    if(key_down(KEY_W)) nextY--;
+    if(key_down(KEY_S)) nextY++;
+    if(key_down(KEY_A)) nextX--;
+    if(key_down(KEY_D)) nextX++;
+
+    // Verifica las colisiones con tiles de pared (#)
+    if(tilemap_entity_is_walkable(&map, &player, nextX, nextY)) {
+        if(map.tiles[nextY][nextX] == 'D' && nextX == 0 && nextY == 6) {
+            engine_set_scene(&level1Scene);
+            return;
+        }
+
+        player.x = nextX;
+        player.y = nextY;
+    }
+
+    if(key_down(KEY_ESCAPE)) engine_stop();
+}
+
+void level2_render() {
+    renderer_set_viewport(1, 2);
+    renderer_draw_text(8, 0, "FIRST FLOOR");
+    renderer_draw_map(&map);
+    renderer_draw_entity(&player);
+    renderer_draw_text(1, 14, "HP: 100");
+}
+
+void level2_destroy() {
+    tilemap_destroy(&map);
+}
+</file>
+
+<file path="games/dungeon/scenes/level2_scene.h">
+#ifndef LEVEL2_SCENE_H
+#define LEVEL2_SCENE_H
+
+#include "../../../engine/scene.h"
+
+extern Scene level2Scene;
+
+#endif
+</file>
+
+<file path="games/entity.h">
+#ifndef ENTITY_H
+#define ENTITY_H
+
+typedef struct {
+    int x;
+    int y;
+
+    int width;
+    int height;
+
+    char sprite;
+} Entity;
+
+#endif
+</file>
+
+<file path="games/tilemap.c">
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include "tilemap.h"
+
+TileMap tilemap_create(int width, int height) {
+    TileMap map;
+
+    map.width = width;
+    map.height = height;
+
+    map.tiles = malloc(sizeof(char*) * height);
+
+    for(int y = 0; y < height; y++) {
+        map.tiles[y] = malloc(sizeof(char) * width);
+
+        for(int x = 0; x < width; x++) {
+            if(
+                y == 0 ||
+                y == height - 1 ||
+                x == 0 ||
+                x == width - 1
+            ) {
+                map.tiles[y][x] = '#';
+            }
+            else {
+                map.tiles[y][x] = ' ';
+            }
+        }
+    }
+
+    return map;
+}
+
+TileMap tilemap_load(const char* path) {
+    FILE* file = fopen(path, "r");
+
+    if(file == NULL) {
+        printf("Error loading map: %s\n", path);
+
+        return tilemap_create(1, 1);
+    }
+
+    char line[256];
+
+    int width = 0;
+    int height = 0;
+
+    while(fgets(line, sizeof(line), file)) {
+        int len = strlen(line);
+
+        if(line[len - 1] == '\n') {
+            len--;
+        }
+
+        if(len > width) {
+            width = len;
+        }
+
+        height++;
+    }
+
+    rewind(file);
+
+    TileMap map = tilemap_create(width, height);
+
+    int y = 0;
+
+    while(fgets(line, sizeof(line), file)) {
+        int len = strlen(line);
+
+        if(line[len - 1] == '\n') {
+            line[len - 1] = '\0';
+            len--;
+        }
+
+        for(int x = 0; x < width; x++) {
+            if(x < len) {
+                map.tiles[y][x] = line[x];
+            }
+            else {
+                map.tiles[y][x] = ' ';
+            }
+        }
+        y++;
+    }
+
+    fclose(file);
+    return map;
+}
+
+int tilemap_is_walkable(TileMap* map, int x, int y) {
+    if (x < 0 || x > map->width) {
+        return 0;
+    }
+
+    if (y < 0 || y > map->height) {
+        return 0;
+    }
+
+    if (map->tiles[y][x] == '#') {
+        return 0;
+    } 
+
+    return 1;
+}
+
+int tilemap_entity_is_walkable(TileMap* map, Entity* entity, int newX, int newY) {
+    for(int y=0; y < entity->height; y++) {
+        for(int x=0; x < entity->width; x++) {
+            int tileX = newX + x;
+            int tileY = newY + y;
+
+            if (!tilemap_is_walkable(map, tileX, tileY)) return 0;
+        }
+    }
+    return 1;
+}
+
+void tilemap_destroy(TileMap* map) {
+    for(int y = 0; y < map->height; y++) {
+        free(map->tiles[y]);
+    }
+
+    free(map->tiles);
+}
+</file>
+
+<file path="games/tilemap.h">
+#ifndef TILEMAP_H
+#define TILEMAP_H
+
+#include "entity.h"
+typedef struct {
+    int width;
+    int height;
+
+    char** tiles;
+} TileMap;
+
+TileMap tilemap_create(int width, int height);
+
+TileMap tilemap_load(const char* path);
+
+int tilemap_is_walkable(TileMap* map, int x, int y);
+
+int tilemap_entity_is_walkable(TileMap* map, Entity* entity, int newX, int newY);
+
+void tilemap_destroy(TileMap* map);
+
+#endif
+</file>
+
+<file path="build.bat">
+@echo off
+
+gcc engine/*.c games/*.c games/dungeon/scenes/*.c games/dungeon/*.c -o game.exe
+
+game.exe
+</file>
+
+<file path="engine/scene.c">
+#include "scene.h"
+</file>
+
+<file path="engine/scene.h">
+#ifndef SCENE_H
+#define SCENE_H
+
+typedef struct {
+    void (*init)();
+    void (*update)();
+    void (*render)();
+    void (*destroy)();
+
+} Scene;
+
+#endif
+</file>
+
+<file path="engine/timer.c">
+#include <windows.h>
+#include "timer.h"
+
+void timer_init() {
+    // El sistema crecerá y aqui se manejaran los ticks y una mejor gestion de FPS 
+}
+
+void timer_update() {
+    // Por ahora la configuración base son ~10 FPS
+    Sleep(100);
+}
+</file>
+
+<file path="engine/engine.h">
+#ifndef ENGINE_H
+#define ENGINE_H
+
+#include "scene.h"
+
+typedef struct {
+    int width;
+    int height;
+} EngineConfig;
+
+void engine_init(EngineConfig config);
+void engine_run();
+void engine_stop();
+void engine_shutdown();
+
+void engine_set_scene(Scene* scene);
+void engine_update();
+void engine_render();
+
+#endif
+</file>
+
+<file path="engine/engine.c">
+#include <stdio.h>
+#include "engine.h"
+#include "input.h"
+#include "renderer.h"
+#include "timer.h"
+
+static int running = 1;
+static Scene* currentScene = NULL;
+
+void engine_init(EngineConfig config) {
+    renderer_init(config.width, config.height);
+    timer_init();
+}
+
+void engine_run() {
+    while(running) {
+        input_update(); // Leer teclado
+        engine_update(); // Actualizar lógica
+        renderer_clear(); // Limpiar framebuffer
+        engine_render(); // Dibujar escena actual
+        renderer_present(); // Mostrar framebuffer en consola
+        timer_update(); // control FPS/ticks
+    }
+}
+
+void engine_stop() {
+    running = 0;
+}
+
+void engine_shutdown() {
+    renderer_shutdown();
+}
+
+void engine_set_scene(Scene *scene) {
+    currentScene = scene;
+
+    if (currentScene->init != NULL) {
+        currentScene->init();
+    }
+}
+
+void engine_update() {
+    if (currentScene != NULL && currentScene->update != NULL) {
+        currentScene->update();
+    }
+}
+
+void engine_render() {
+    if (currentScene != NULL && currentScene->render != NULL) {
+        currentScene->render();
+    }
+}
+</file>
+
+<file path="engine/renderer.c">
+#include <stdio.h>
+#include <stdlib.h>
+#include "renderer.h"
+
+static int screenWidth;
+static int screenHeight;
+
+static char** screen;
+
+static int viewportX = 0;
+static int viewportY = 0;
+
+void renderer_init(int width, int height) {
+    screenWidth = width;
+    screenHeight = height;
+
+    screen = malloc(sizeof(char*) * screenHeight);
+
+    for(int y=0; y < screenHeight; y++) {
+        screen[y] = malloc(sizeof(char) * screenWidth);
+    }
+}
+
+void renderer_clear() {
+    for(int y = 0; y < screenHeight; y++) {
+        for(int x = 0; x < screenWidth; x++) {
+            screen[y][x] = ' ';
+        }
+    }
+}
+
+void renderer_draw_char(int x, int y, char c) {
+    if(x < 0 || x >= screenWidth) return;
+    if(y < 0 || y >= screenHeight) return;
+
+    screen[y][x] = c;
+}
+
+void renderer_present() {
+    system("cls");
+
+    for(int y = 0; y < screenHeight; y++) {
+        for(int x = 0; x < screenWidth; x++) {
+            printf("%c", screen[y][x]);
+        }
+
+        printf("\n");
+    }
+}
+
+void renderer_set_viewport(int x, int y) {
+    viewportX = x;
+    viewportY = y;
+}
+
+void renderer_draw_entity(Entity* entity) {
+    for(int y=0; y < entity->height; y++) {
+        for(int x=0; x < entity->width; x++) {
+            renderer_draw_char(
+                viewportX + entity->x + x,
+                viewportY + entity->y + y,
+                entity->sprite
+            );
+        }
+    }
+}
+
+void renderer_draw_map(TileMap* map) {
+    for(int y=0; y < map->height; y++) {
+        for(int x=0; x < map->width; x++) {
+            if (map->tiles[y][x] != ' ') renderer_draw_char(viewportX + x, viewportY + y, map->tiles[y][x]);
+        }
+    }
+}
+
+void renderer_draw_text(int x, int y, const char* text) {
+    int i = 0;
+
+    while(text[i] != '\0') {
+        renderer_draw_char(x + i, y, text[i]);
+        i++;
+    }
+}
+
+void renderer_shutdown() {
+    for(int y = 0; y < screenHeight; y++) {
+        free(screen[y]);
+    }
+
+    free(screen);
+}
+</file>
+
+<file path="engine/renderer.h">
+#ifndef RENDERER_H
+#define RENDERER_H
+
+#include "../games/entity.h"
+#include "../games/tilemap.h"
+
+#define SCREEN_WIDTH 20
+#define SCREEN_HEIGHT 10
+
+void renderer_init(int width, int height);
+
+void renderer_clear();
+
+void renderer_draw_char(int x, int y, char c);
+
+void renderer_draw_text(int x, int y, const char* text);
+
+void renderer_draw_entity(Entity* entity);
+
+void renderer_draw_map(TileMap* map);
+
+void renderer_present();
+
+void renderer_set_viewport(int x, int y);
+
+void renderer_shutdown();
+
+#endif
+</file>
+
+</files>
