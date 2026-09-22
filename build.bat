@@ -1,5 +1,5 @@
 @echo off
 
-gcc engine/*.c games/*.c games/dungeon/scenes/*.c games/dungeon/*.c -o game.exe
+gcc engine/*.c games/*.c games/lightsOut/scenes/*.c games/lightsOut/*.c -o game.exe
 
 game.exe
