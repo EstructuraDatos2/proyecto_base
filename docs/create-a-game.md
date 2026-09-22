@@ -30,10 +30,10 @@ games/
 
 Cada juego puede:
 
-✅ Reutilizar el engine
-✅ Compartir sistemas
-✅ Tener lógica propia
-✅ Tener escenas independientes
+✅ Reutilizar el engine  
+✅ Compartir sistemas  
+✅ Tener lógica propia  
+✅ Tener escenas independientes  
 
 ---
 
