@@ -4,8 +4,8 @@
 #include "../../../engine/input.h"
 #include "../../../engine/engine.h"
 
-#include "../../tilemap.h"
-#include "../../entity.h"
+// #include "../../tilemap.h"
+// #include "../../entity.h"
 
 // PROTOTIPOS
 void juego1_init();

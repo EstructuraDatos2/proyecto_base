@@ -1,68 +1,72 @@
-# 🎮 Crear un nuevo juego
+# 🎮 Crear un juego nuevo — Guía rápida
 
-El engine está diseñado para soportar múltiples juegos dentro de la carpeta:
+Esta guía explica cómo crear un juego funcional desde cero usando el **ASCII Dungeon Engine**.
 
-```text id="4p4d9f"
-games/
-```
+La idea es empezar con lo mínimo:
 
-Cada juego es independiente.
+- `main.c`
+- una escena principal (`.c` + `.h`)
+- `maps/` solamente si el juego necesita un mapa
+
+No necesitas crear `entities/`, `systems/` ni otras carpetas hasta que realmente las necesites.
 
 ---
 
-# 📁 Estructura recomendada
+## 1. Crear la carpeta del juego
 
-Ejemplo:
+Dentro de `games/`, crea una carpeta con el nombre de tu juego.
 
-```text id="o7shhd"
+Por ejemplo:
+
+```text
 games/
-└── pong/
+└── miJuego/
+```
+
+Dentro crea:
+
+```text
+games/
+└── miJuego/
     ├── main.c
-    ├── scenes/
+    └── scenes/
+        ├── juego.c
+        └── juego.h
+```
+
+Si tu juego utilizará un mapa, agrega:
+
+```text
+games/
+└── miJuego/
+    ├── main.c
     ├── maps/
-    ├── entities/
-    └── systems/
+    │   └── level1.txt
+    └── scenes/
+        ├── juego.c
+        └── juego.h
 ```
 
 ---
 
-# 🧠 Filosofía
+# 2. Crear `main.c`
 
-Cada juego puede:
+Copia esta estructura:
 
-✅ Reutilizar el engine  
-✅ Compartir sistemas  
-✅ Tener lógica propia  
-✅ Tener escenas independientes  
-
----
-
-# 🚀 Paso 1 — Crear carpeta
-
-```text id="m7z2kr"
-games/pong/
-```
-
----
-
-# 🚀 Paso 2 — Crear main.c
-
-Ejemplo:
-
-```c id="6e3wkk"
+```c
 #include "../../engine/engine.h"
-#include "scenes/game_scene.h"
+#include "scenes/juego.h"
 
 int main() {
 
     EngineConfig config = {
-        40,
-        20
+        30,
+        16
     };
 
     engine_init(config);
 
-    engine_set_scene(&gameScene);
+    engine_set_scene(&juego);
 
     engine_run();
 
@@ -72,132 +76,257 @@ int main() {
 }
 ```
 
----
+### ¿Qué hace?
 
-# 🚀 Paso 3 — Crear escena
+En orden:
 
-```text id="3t3jlv"
-games/pong/scenes/
+```text
+engine_init()
+      ↓
+carga la escena inicial
+      ↓
+engine_run()
+      ↓
+ejecuta el juego
+      ↓
+engine_shutdown()
 ```
 
+⚠️ La línea más importante es:
+
+```c
+engine_set_scene(&juego);
+```
+
+Sin ella, el engine no tiene ninguna escena que actualizar ni dibujar.
+
 ---
 
-# 📦 Escena mínima
+# 3. Crear `juego.h`
 
-```c id="2jk7d8"
-Scene gameScene = {
-    game_init,
-    game_update,
-    game_render,
-    game_destroy
+En:
+
+```text
+games/miJuego/scenes/juego.h
+```
+
+coloca:
+
+```c
+#ifndef JUEGO_H
+#define JUEGO_H
+
+#include "../../../engine/scene.h"
+
+extern Scene juego;
+
+#endif
+```
+
+Este archivo permite que `main.c` conozca la escena `juego`.
+
+---
+
+# 4. Crear `juego.c`
+
+En:
+
+```text
+games/miJuego/scenes/juego.c
+```
+
+coloca:
+
+```c
+#include "juego.h"
+
+#include "../../../engine/renderer.h"
+#include "../../../engine/input.h"
+#include "../../../engine/engine.h"
+
+void juego_init();
+void juego_update();
+void juego_render();
+void juego_destroy();
+
+Scene juego = {
+    juego_init,
+    juego_update,
+    juego_render,
+    juego_destroy
 };
+
+void juego_init() {
+    // Configuración inicial
+}
+
+void juego_update() {
+    // Lógica del juego
+
+    if(key_down(KEY_ESCAPE)) {
+        engine_stop();
+    }
+}
+
+void juego_render() {
+    renderer_draw_text(2, 2, "MI JUEGO");
+    renderer_draw_text(2, 4, "Hola mundo!");
+}
+
+void juego_destroy() {
+    // Liberar recursos
+}
 ```
-> [!NOTE]
-> Puedes revisar la carpeta games/dungeon/scenes
-> Existen 2 niveles donde puedes ver la estructura general
+
+Con esto ya tienes un juego funcional.
+
+Al ejecutarlo deberías ver algo parecido a:
+
+```text
+  MI JUEGO
+
+  Hola mundo!
+```
+
+Y `ESC` debe cerrar el juego.
+
 ---
 
-# 🚀 Paso 4 — Compilar
+# 5. Si necesitas un mapa
 
-Actualizar:
+Solo crea la carpeta:
 
-```text id="8mdp2g"
-build.bat
+```text
+games/miJuego/maps/
 ```
 
-Ejemplo:
+y dentro, por ejemplo:
 
-```bash id="r8y6sv"
-gcc engine/*.c games/*.c games/pong/scenes/*.c games/pong/*.c -o pong.exe
+```text
+level1.txt
+```
+
+Un mapa mínimo puede ser:
+
+```text
+##############################
+#                            #
+#                            #
+#                            #
+#                            #
+#                            #
+##############################
+```
+
+`#` representa una pared y los espacios representan zonas caminables.
+
+Los mapas se cargan desde una escena:
+
+```c
+TileMap map;
+
+void juego_init() {
+    map = tilemap_load("games/miJuego/maps/level1.txt");
+}
+```
+
+Para dibujarlo:
+
+```c
+void juego_render() {
+    renderer_draw_map(&map);
+}
+```
+
+Y cuando la escena termine:
+
+```c
+void juego_destroy() {
+    tilemap_destroy(&map);
+}
+```
+
+Por lo tanto, el flujo de un mapa es:
+
+```text
+init()
+  ↓
+cargar mapa
+
+render()
+  ↓
+dibujar mapa
+
+destroy()
+  ↓
+liberar mapa
+```
+
+⚠️ No cargues el mapa dentro de `render()`. `render()` se ejecuta muchas veces.
+
+---
+
+# 6. Compilar el juego
+
+Cada juego debe tener su propio comando de compilación.
+
+Para `miJuego`:
+
+```bash
+gcc engine/*.c games/*.c games/miJuego/scenes/*.c games/miJuego/*.c -o miJuego.exe
+```
+
+Después:
+
+```bash
+miJuego.exe
+```
+
+Puedes agregar este comando a `build.bat` si quieres compilarlo fácilmente.
+
+Por ejemplo:
+
+```bat
+gcc engine/*.c games/*.c games/miJuego/scenes/*.c games/miJuego/*.c -o miJuego.exe
+
+miJuego.exe
 ```
 
 ---
 
-# 🎮 Múltiples juegos
+# 7. Estructura mínima final
 
-Puedes tener:
+Sin mapa:
 
-```text id="r8p1m5"
+```text
 games/
-├── dungeon/
-├── pong/
-├── snake/
-├── tetris/
-└── platformer/
+└── miJuego/
+    ├── main.c
+    └── scenes/
+        ├── juego.c
+        └── juego.h
 ```
 
----
+Con mapa:
 
-# 🧠 Sistemas reutilizables
-
-Todos los juegos pueden usar:
-
-```text id="b0y9pr"
-tilemap.c
-collision.c
-entity.h
+```text
+games/
+└── miJuego/
+    ├── main.c
+    ├── maps/
+    │   └── level1.txt
+    └── scenes/
+        ├── juego.c
+        └── juego.h
 ```
 
-Pero NO es obligatorio.
+Eso es todo lo necesario para comenzar.
 
-Cada juego puede extender el engine.
+Después puedes agregar:
 
----
-
-# 📌 Recomendación
-
-Mantén separado:
-
-| Carpeta  | Responsabilidad   |
-| -------- | ----------------- |
-| scenes   | Estados del juego |
-| maps     | Tilemaps          |
-| entities | Entidades         |
-| systems  | Sistemas extra    |
-
----
-
-# 🎨 Ejemplo visual
-
-```text id="z0w76q"
-PONG
-├── scenes/
-├── entities/
-├── ui/
-└── audio/
-```
-
----
-
-# 🚀 Ideas de proyectos
-
-✅ Pong
-✅ Snake
-✅ RPG
-✅ Roguelike
-✅ Shooter
-✅ Tower Defense
-✅ Pacman
-
----
-
-# ⚠️ Error común
-
-Poner TODA la lógica en:
-
-```text id="6xx4tc"
-main.c
-```
-
----
-
-# ✅ Correcto
-
-Separar responsabilidades:
-
-```text id="h3iwdv"
-main.c
-scenes/
-systems/
+```text
 entities/
+systems/
 ```
+
+solamente cuando el juego realmente los necesite.
