@@ -37,12 +37,10 @@ void renderer_draw_char(int x, int y, char c) {
 }
 
 void renderer_present() {
-    system("cls");
+    printf("\x1b[H");
 
     for(int y = 0; y < screenHeight; y++) {
-        for(int x = 0; x < screenWidth; x++) {
-            printf("%c", screen[y][x]);
-        }
+        fwrite(screen[y], sizeof(char), screenWidth, stdout);
 
         printf("\n");
     }
