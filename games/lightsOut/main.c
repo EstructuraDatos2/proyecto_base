@@ -3,8 +3,8 @@
 
 int main() {
     EngineConfig screenConfig = {
-        20,
-        25
+        24,
+        22
     };
     
     // INIT: Configuracion inicial de pantalla
