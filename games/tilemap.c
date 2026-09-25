@@ -90,11 +90,11 @@ TileMap tilemap_load(const char* path) {
 }
 
 int tilemap_is_walkable(TileMap* map, int x, int y) {
-    if (x < 0 || x > map->width) {
+    if (x < 0 || x >= map->width) {
         return 0;
     }
 
-    if (y < 0 || y > map->height) {
+    if (y < 0 || y >= map->height) {
         return 0;
     }
 
