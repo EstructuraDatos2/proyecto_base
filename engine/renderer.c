@@ -1,46 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "renderer.h"
 
 static int screenWidth;
 static int screenHeight;
 
-static char** screen;
+static char* screen;
 
 static int viewportX = 0;
 static int viewportY = 0;
 
-void renderer_init(int width, int height) {
-    screenWidth = width;
-    screenHeight = height;
+void renderer_init(int *width, int *height) {
+    screenWidth = *width;
+    screenHeight = *height;
 
-    screen = malloc(sizeof(char*) * screenHeight);
-
-    for(int y=0; y < screenHeight; y++) {
-        screen[y] = malloc(sizeof(char) * screenWidth);
-    }
+    screen = malloc(screenWidth * screenHeight);
 }
 
 void renderer_clear() {
-    for(int y = 0; y < screenHeight; y++) {
-        for(int x = 0; x < screenWidth; x++) {
-            screen[y][x] = ' ';
-        }
-    }
+    memset(screen, ' ', screenWidth * screenHeight);
 }
 
 void renderer_draw_char(int x, int y, char c) {
-    if(x < 0 || x >= screenWidth) return;
-    if(y < 0 || y >= screenHeight) return;
+    if (x < 0 || x >= screenWidth) return;
+    if (y < 0 || y >= screenHeight) return;
 
-    screen[y][x] = c;
+    screen[y * screenWidth + x] = c;
 }
 
 void renderer_present() {
     printf("\x1b[H");
 
     for(int y = 0; y < screenHeight; y++) {
-        fwrite(screen[y], sizeof(char), screenWidth, stdout);
+        fwrite(&screen[y * screenWidth], sizeof(char), screenWidth, stdout);
 
         printf("\n");
     }
@@ -81,9 +74,5 @@ void renderer_draw_text(int x, int y, const char* text) {
 }
 
 void renderer_shutdown() {
-    for(int y = 0; y < screenHeight; y++) {
-        free(screen[y]);
-    }
-
     free(screen);
 }

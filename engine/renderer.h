@@ -7,7 +7,7 @@
 #define SCREEN_WIDTH 20
 #define SCREEN_HEIGHT 10
 
-void renderer_init(int width, int height);
+void renderer_init(int *width, int *height);
 
 void renderer_clear();
 
