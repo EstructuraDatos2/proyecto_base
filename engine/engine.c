@@ -8,7 +8,7 @@ static int running = 1;
 static Scene* currentScene = NULL;
 
 void engine_init(EngineConfig config) {
-    renderer_init(config.width, config.height);
+    renderer_init(&config.width, &config.height);
     timer_init();
 }
 
