@@ -55,21 +55,47 @@ void renderer_set_viewport(int x, int y) {
 }
 
 void renderer_draw_entity(Entity* entity) {
-    for(int y=0; y < entity->height; y++) {
-        for(int x=0; x < entity->width; x++) {
-            renderer_draw_char(
-                viewportX + entity->x + x,
-                viewportY + entity->y + y,
-                entity->sprite
-            );
+    for (int y = 0; y < entity->height; y++) {
+        int screenY = viewportY + entity->y + y;
+
+        if (screenY < 0 || screenY >= screenHeight) {
+            continue;
+        }
+
+        for (int x = 0; x < entity->width; x++) {
+            int screenX = viewportX + entity->x + x;
+
+            if (screenX < 0 || screenX >= screenWidth) {
+                continue;
+            }
+
+            screen[screenY * screenWidth + screenX] = entity->sprite;
         }
     }
 }
 
 void renderer_draw_map(TileMap* map) {
-    for(int y=0; y < map->height; y++) {
-        for(int x=0; x < map->width; x++) {
-            if (map->tiles[y][x] != ' ') renderer_draw_char(viewportX + x, viewportY + y, map->tiles[y][x]);
+    for (int y = 0; y < map->height; y++) {
+        int screenY = viewportY + y;
+
+        if (screenY < 0 || screenY >= screenHeight) {
+            continue;
+        }
+
+        for (int x = 0; x < map->width; x++) {
+            char tile = map->tiles[y][x];
+
+            if (tile == ' ') {
+                continue;
+            }
+
+            int screenX = viewportX + x;
+
+            if (screenX < 0 || screenX >= screenWidth) {
+                continue;
+            }
+
+            screen[screenY * screenWidth + screenX] = tile;
         }
     }
 }
