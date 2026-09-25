@@ -7,6 +7,8 @@ static int screenWidth;
 static int screenHeight;
 
 static char* screen;
+static char* outputBuffer;
+static int outputSize;
 
 static int viewportX = 0;
 static int viewportY = 0;
@@ -16,6 +18,8 @@ void renderer_init(int *width, int *height) {
     screenHeight = *height;
 
     screen = malloc(screenWidth * screenHeight);
+    outputSize = (screenWidth + 1) * screenHeight;
+    outputBuffer = malloc(outputSize);
 }
 
 void renderer_clear() {
@@ -32,11 +36,17 @@ void renderer_draw_char(int x, int y, char c) {
 void renderer_present() {
     printf("\x1b[H");
 
-    for(int y = 0; y < screenHeight; y++) {
-        fwrite(&screen[y * screenWidth], sizeof(char), screenWidth, stdout);
+    for (int y = 0; y < screenHeight; y++) {
+        memcpy(
+            &outputBuffer[y * (screenWidth + 1)],
+            &screen[y * screenWidth],
+            screenWidth
+        );
 
-        printf("\n");
+        outputBuffer[y * (screenWidth + 1) + screenWidth] = '\n';
     }
+
+    fwrite(outputBuffer, sizeof(char), outputSize, stdout);
 }
 
 void renderer_set_viewport(int x, int y) {
@@ -74,5 +84,6 @@ void renderer_draw_text(int x, int y, const char* text) {
 }
 
 void renderer_shutdown() {
+    free(outputBuffer);
     free(screen);
 }
