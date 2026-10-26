@@ -5,7 +5,7 @@
 #include "../../../engine/engine.h"
 #include "../../../engine/timer.h"
 
-// #include "../../tilemap.h"
+#include "../../tilemap.h"
 // #include "../../entity.h"
 
 // PROTOTIPOS
@@ -21,9 +21,12 @@ Scene juego1 = {
     juego1_destroy
 };
 
+TileMap level1;
+
 void juego1_init() {
     // Configuraciones
     timer_reset();
+    level1 = tilemap_load("./games/lightsOut/maps/tablero.txt");
 }
 
 void juego1_update() {
@@ -42,7 +45,7 @@ void juego1_render() {
     renderer_draw_text(3, 3, "==================");
 
     // Tablero
-    // TODO Dibujar mapas
+    renderer_draw_map(&level1);
 
     // Información
     renderer_draw_text(1, 18, timer_get_time());
@@ -53,4 +56,5 @@ void juego1_render() {
 
 void juego1_destroy() {
     // Eliminar elementos creados
+    tilemap_destroy(&level1);
 }
